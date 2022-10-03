@@ -5,8 +5,16 @@ from sklearn.model_selection import train_test_split
 from sklearn import datasets
 
 def pca(X_train, y_train, X_test, y_test, n_components):
-    X_train = StandardScaler().fit_transform(X_train)
-    X_test = StandardScaler().fit_transform(X_test)
+    # X_train = StandardScaler().fit_transform(X_train)
+    # X_test = StandardScaler().fit_transform(X_test)
+
+    X_mean_train = np.average(X_train, axis=0)
+    X_var_train = np.var(X_train, axis=0)
+    X_train = (X_train - X_mean_train) / X_var_train
+
+    X_mean_test = np.average(X_test, axis=0)
+    X_var_test = np.var(X_test, axis=0)
+    X_test = (X_test - X_mean_test) / X_var_test
 
     u, s, vh = np.linalg.svd(X_train)
     Z = np.matmul(X_train, vh)
@@ -32,4 +40,8 @@ output = list()
 for n in list(range(1, X.shape[1]+1)):
     print(n)
     mse = pca(X_train, y_train, X_test, y_test, n)
+    mse = round(mse,1)
     output.append(mse)
+
+print(output)
+# [4204.9, 4024.6, 3976.3, 4119.7, 4044.6, 3783.8, 2859.4, 2820.1, 2821.8, 2800.2]
