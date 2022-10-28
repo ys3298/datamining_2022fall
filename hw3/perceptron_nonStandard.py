@@ -61,5 +61,5 @@ def prediction_accuracy(estimated_beta, y_true, X_true):
     return acc,predicted
 
 
-beta_hat = perceptron_nonStandard(X, y, beta=np.ones(X.shape[1]), beta0=0, rho=2, mis_class = 0)
+beta_hat = perceptron_nonStandard(X, y, beta=np.ones(X.shape[1]), beta0=0, rho=2, mis_class = 1)
 results = prediction_accuracy(beta_hat, y, X)
