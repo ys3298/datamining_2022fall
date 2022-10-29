@@ -4,10 +4,11 @@ import random
 import matplotlib
 matplotlib.use('TkAgg')
 import matplotlib.pyplot as plt
-from sklearn import datasets
-from sklearn.preprocessing import MinMaxScaler
+
 
 # reference: https://scikit-learn.org/stable/modules/generated/sklearn.datasets.make_blobs.html
+np.random.seed(seed=1)
+# np.random.seed(seed=0) # not work
 X, y = datasets.make_blobs(n_samples=20,n_features=2,centers=2,cluster_std=1)
 y[y==0]=-1
 
@@ -42,15 +43,37 @@ def perceptron_nonStandard(X_train, y_train, beta, beta0, rho, mis_class = 5):
     return np.insert(beta_old, 0, beta0_old)
 
 
+def perceptron_Standard(X_train, y_train, beta, beta0, rho, mis_class = 5):
+    beta_old = np.copy(beta)
+    beta0_old = np.copy(beta0)
+    ite = 1
+    while ite == 1 or len(mis) > mis_class:
+        ite = ite + 1
+        beta_old = np.copy(beta)
+        beta0_old = np.copy(beta0)
+
+        pred_y = pred(X_train, beta, beta0)
+        mis = np.asarray(np.where(pred_y != y_train.reshape(-1))).reshape(-1)
+        if len(mis) != 0:
+            one_ind = random.choice(mis)
+            norm = np.linalg.norm(beta_old)
+            linear_comb = np.matmul(X_train, beta_old) + beta0_old
+            beta = (beta_old + rho * X_train[one_ind,:]*y_train[one_ind]*norm - y_train[one_ind]*linear_comb[one_ind]*beta_old) / pow(norm, 3)
+            beta0 = beta0_old + rho * y_train[one_ind]
+
+            # if np.isnan(beta[0]):
+            #     print('stop')
+
+        print(len(mis))
+
+    return np.insert(beta_old, 0, beta0_old)
+
+
 def prediction_accuracy(estimated_beta, y_true, X_true):
     predicted = pred(X_true, estimated_beta[1:len(estimated_beta)], estimated_beta[0])
     acc = sum(predicted == y_true)/len(predicted)
-    print(acc)
+    # print(acc)
     return acc,predicted
-
-
-beta_hat = perceptron_nonStandard(X, y, beta=np.ones(X.shape[1]), beta0=0, rho=2, mis_class = 0)
-results = prediction_accuracy(beta_hat, y, X)
 
 
 # visulize the results
@@ -78,4 +101,9 @@ def plot_decision_boundary(X, theta):
     plt.plot(x1, x2, 'y-')
 
 
-plot_decision_boundary(X, beta_hat)
+beta_hat_nonStandard = perceptron_nonStandard(X, y, beta=np.ones(X.shape[1]), beta0=0, rho=2, mis_class=0)
+beta_hat_Standard = perceptron_Standard(X, y, beta=np.ones(X.shape[1]), beta0=0, rho=2, mis_class=0)
+results_nonStandard = prediction_accuracy(beta_hat_nonStandard, y, X)
+results_Standard = prediction_accuracy(beta_hat_Standard, y, X)
+plot_decision_boundary(X, beta_hat_nonStandard)
+plot_decision_boundary(X, beta_hat_Standard)
