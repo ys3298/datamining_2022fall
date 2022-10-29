@@ -1,12 +1,14 @@
 from sklearn import datasets
 import numpy as np
 import random
+import matplotlib
+matplotlib.use('TkAgg')
 import matplotlib.pyplot as plt
 from sklearn import datasets
 from sklearn.preprocessing import MinMaxScaler
 
 # reference: https://scikit-learn.org/stable/modules/generated/sklearn.datasets.make_blobs.html
-X, y = datasets.make_blobs(n_samples=15,n_features=2,centers=2,cluster_std=1)
+X, y = datasets.make_blobs(n_samples=20,n_features=2,centers=2,cluster_std=1)
 y[y==0]=-1
 
 def pred(X_inp, beta_inp, beta0_inp):
@@ -50,6 +52,7 @@ def prediction_accuracy(estimated_beta, y_true, X_true):
 beta_hat = perceptron_nonStandard(X, y, beta=np.ones(X.shape[1]), beta0=0, rho=2, mis_class = 0)
 results = prediction_accuracy(beta_hat, y, X)
 
+
 # visulize the results
 # reference: https://towardsdatascience.com/exploring-the-perceptron-algorithm-using-python-c1d3af53a7c7
 
@@ -61,12 +64,11 @@ def plot_decision_boundary(X, theta):
     # The Line is y=mx+c
     # So, Equate mx+c = theta0.X0 + theta1.X1 + theta2.X2
     # Solving we find m and c
-    x1 = [min(X[:, 0]), max(X[:, 0])]
+    x1 = np.array([min(X[:, 0]), max(X[:, 0])])
     m = -theta[1] / theta[2]
     c = -theta[0] / theta[2]
     x2 = m * x1 + c
 
-    # Plotting
     fig = plt.figure(figsize=(10, 8))
     plt.plot(X[:, 0][y == -1], X[:, 1][y == -1], "r^")
     plt.plot(X[:, 0][y == 1], X[:, 1][y == 1], "bs")
