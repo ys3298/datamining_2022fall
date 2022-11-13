@@ -12,13 +12,17 @@ X_Slack, labels_Slack = make_blobs(n_samples=100, n_features=2, centers=2, clust
 # plt.title('Two blobs')
 # plt.scatter(X_Slack[:, 0], X_Slack[:, 1], c=labels_Slack, s=25);
 
+X = np.array([5, 15, 25, 35, 45, 55]).reshape((-1, 1))
+y = np.array([5, 20, 14, 32, 22, 38])
+
+
 
 def svm_noSlack(X, labels):
     # split the data in the two classes. Name them class_1 and class_2.
     ## Assign label 0 to class_1
     class_1 = X[labels == 0,]
     ## Assign label 1 to class_2
-    class_2 =  X[labels == 1,]
+    class_2 = X[labels == 1,]
     # Define the variables
     beta = cp.Variable(2)
     beta0 = cp.Variable()
@@ -66,8 +70,43 @@ def svm_Slack(X, labels, C):
 
     # Sum the constraints
     constraints = constraint1 + constraint2
-    # Define the objective. Hint: use cp.norm
+    # Define the objective.
     obj = cp.Minimize(C*(sum(xi_1) + sum(xi_2)) + (cp.norm(beta)**2)/2)
+    # Add objective and constraint in the problem
+    prob = cp.Problem(obj, constraints)
+    # Solve the problem
+    prob.solve()
+    print("optimal var", beta.value, beta0.value)
+
+    return beta.value, beta0.value
+
+
+def hinge(x):
+    if x >= 0:
+        y = x
+    else:
+        y = 0
+    return y
+
+
+def svm_Regression(X, y, C=1, epsilon=0.1):
+    # Define the variables
+    beta = cp.Variable()
+    beta0 = cp.Variable()
+
+    # Define the constraints
+    xi = cp.Variable(X.shape[0])
+    xi_hat = cp.Variable(X.shape[0])
+
+    constraints = []
+    for i in range(X.shape[0]):
+        constraints += [xi[i] >= 0]
+        constraints += [xi_hat[i] >= 0]
+        constraints += [(X[i] * beta + beta0) - (y[i] + epsilon) - xi[i] <= 0]
+        constraints += [(y[i] - epsilon) - (X[i] * beta + beta0) - xi_hat[i] <= 0]
+
+    # Define the objective
+    obj = cp.Minimize(C*(sum(xi)+sum(xi_hat)) + (cp.norm(beta) ** 2)/2)
     # Add objective and constraint in the problem
     prob = cp.Problem(obj, constraints)
     # Solve the problem
@@ -98,16 +137,33 @@ def plot_decision_boundary(X, y, theta0, theta):
     plt.plot(x1, x2, 'y-')
 
 
+
+def plot_decision_boundary_regression(X, y, theta0, theta):
+    x1 = np.array([min(X), max(X)])
+    x2 = beta * x1 + beta0
+
+    fig = plt.figure(figsize=(10, 8))
+    plt.plot(X, y, "r^")
+    plt.xlabel("x")
+    plt.ylabel("y")
+    plt.title('SV Regression')
+    plt.plot(x1, x2, 'y-')
+
+
 # results = svm_noSlack(X_noSlack, labels_noSlack)
 # beta = results[0]
 # beta0 = results[1]
 # plot_decision_boundary(X_noSlack, labels_noSlack, beta0, beta)
 
 
-results = svm_Slack(X_Slack, labels_Slack, C=1)
+# results = svm_Slack(X_Slack, labels_Slack, C=1)
+# beta = results[0]
+# beta0 = results[1]
+# plot_decision_boundary(X_Slack, labels_Slack, beta0, beta)
+
+
+results = svm_Regression(X, y, C=1, epsilon=0.1)
 beta = results[0]
 beta0 = results[1]
-plot_decision_boundary(X_Slack, labels_Slack, beta0, beta)
-
-
+plot_decision_boundary_regression(X,y,beta0,beta)
 # reference: https://github.com/learn-co-curriculum/dsc-building-an-svm-from-scratch-lab/blob/master/index.ipynb

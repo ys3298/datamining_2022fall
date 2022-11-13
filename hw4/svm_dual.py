@@ -5,15 +5,20 @@ import matplotlib.pyplot as plt
 from cvxopt import matrix as cvxopt_matrix
 from cvxopt import solvers as cvxopt_solvers
 
-
+# data without slacks
 # X = np.array([[3,4],[1,4],[2,3],[6,-1],[7,-1],[5,-3]])
 # y = np.array([-1,-1, -1, 1, 1, 1])
 
-X = np.array([[3,4],[1,4],[2,3],[6,-1],[7,-1],[5,-3],[2,4], [4,4]])
-y = np.array([-1, -1, -1, 1, 1, 1, 1, 1])
+# data with slacks
+# X = np.array([[3,4],[1,4],[2,3],[6,-1],[7,-1],[5,-3],[2,4], [4,4]])
+# y = np.array([-1, -1, -1, 1, 1, 1, 1, 1])
 
-x_neg = X[0:3, ]
-x_pos = X[3:X.shape[0], ]
+# x_neg = X[0:3, ]
+# x_pos = X[3:X.shape[0], ]
+
+# data for regression
+X = np.array([5, 15, 25, 35, 45, 55]).reshape((-1, 1))
+y = np.array([5, 20, 14, 32, 22, 38])
 
 
 def svm_noSlack_dual(X,y):
@@ -90,6 +95,10 @@ def svm_Slack_dual(X, y, C=1):
     return theta, theta0
 
 
+def svm_regression(X,y,C=1):
+    
+
+
 def plot_decision_boundary(X, y, theta0, theta):
     x1 = np.array([min(X[:, 0]), max(X[:, 0])])
     m = -theta[0] / theta[1]
@@ -106,31 +115,22 @@ def plot_decision_boundary(X, y, theta0, theta):
 
 
 # results = svm_noSlack_dual(X,y)
-results = svm_Slack_dual(X,y,C=1)
-beta = results[0]
-beta0 = results[1]
-plot_decision_boundary(X, y, beta0, beta)
-
-from sklearn.svm import SVCdef plot_decision_boundary(X, y, theta0, theta):
-    x1 = np.array([min(X[:, 0]), max(X[:, 0])])
-    m = -theta[0] / theta[1]
-    c = -theta0 / theta[1]
-    x2 = m * x1 + c
-
-    fig = plt.figure(figsize=(10, 8))
-    plt.scatter(x_neg[:, 0], x_neg[:, 1], marker='x', color='r', label='Negative -1')
-    plt.scatter(x_pos[:, 0], x_pos[:, 1], marker='o', color='b', label='Positive +1')
-    plt.xlabel("Feature 1")
-    plt.ylabel("Feature 2")
-    plt.title('SVM')
-    plt.plot(x1, x2, 'y-')
+# results = svm_Slack_dual(X,y,C=1)
+# beta = results[0]
+# beta0 = results[1]
+# plot_decision_boundary(X, y, beta0, beta)
 
 
-# results = svm_noSlack_dual(X,y)
-results = svm_Slack_dual(X,y,C=1)
-beta = results[0]
-beta0 = results[1]
-plot_decision_boundary(X, y, beta0, beta)
-clf = SVC(C = 10, kernel = 'linear')
-clf.fit(X, y.ravel())
-print(clf.coef_)
+
+# # results = svm_noSlack_dual(X,y)
+# results = svm_Slack_dual(X,y,C=1)
+# beta = results[0]
+# beta0 = results[1]
+# plot_decision_boundary(X, y, beta0, beta)
+
+
+# # sklearn
+# from sklearn.svm import SVCdef
+# clf = SVC(C = 10, kernel = 'linear')
+# clf.fit(X, y.ravel())
+# print(clf.coef_)
