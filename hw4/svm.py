@@ -32,7 +32,7 @@ def svm_noSlack(X, labels):
         constraint2 += [np.matmul(class_2[j,], beta) + beta0 >= 1]
     # Sum the constraints
     constraints = constraint1 + constraint2
-    # Define the objective. Hint: use cp.norm
+    # Define the objective.
     obj = cp.Minimize((cp.norm(beta)**2)/2)
     # Add objective and constraint in the problem
     prob = cp.Problem(obj, constraints)
@@ -98,13 +98,16 @@ def plot_decision_boundary(X, y, theta0, theta):
     plt.plot(x1, x2, 'y-')
 
 
-results = svm_noSlack(X_noSlack, labels_noSlack)
-beta = results[0]
-beta0 = results[1]
-plot_decision_boundary(X_noSlack, labels_noSlack, beta0, beta)
-
-
-# results = svm_Slack(X_Slack, labels_Slack, C=1)
+# results = svm_noSlack(X_noSlack, labels_noSlack)
 # beta = results[0]
 # beta0 = results[1]
-# plot_decision_boundary(X_Slack, labels_Slack, beta0, beta)
+# plot_decision_boundary(X_noSlack, labels_noSlack, beta0, beta)
+
+
+results = svm_Slack(X_Slack, labels_Slack, C=1)
+beta = results[0]
+beta0 = results[1]
+plot_decision_boundary(X_Slack, labels_Slack, beta0, beta)
+
+
+# reference: https://github.com/learn-co-curriculum/dsc-building-an-svm-from-scratch-lab/blob/master/index.ipynb
