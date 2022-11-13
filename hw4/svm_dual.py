@@ -6,27 +6,27 @@ from cvxopt import matrix as cvxopt_matrix
 from cvxopt import solvers as cvxopt_solvers
 
 # data without slacks
-# X = np.array([[3,4],[1,4],[2,3],[6,-1],[7,-1],[5,-3]])
-# y = np.array([-1,-1, -1, 1, 1, 1])
+X = np.array([[3,4],[1,4],[2,3],[6,-1],[7,-1],[5,-3]])
+y = np.array([-1,-1, -1, 1, 1, 1])
 
 # data with slacks
 # X = np.array([[3,4],[1,4],[2,3],[6,-1],[7,-1],[5,-3],[2,4], [4,4]])
 # y = np.array([-1, -1, -1, 1, 1, 1, 1, 1])
 
-# x_neg = X[0:3, ]
-# x_pos = X[3:X.shape[0], ]
+x_neg = X[0:3, ]
+x_pos = X[3:X.shape[0], ]
 
 # data for regression
-X = np.array([5, 15, 25, 35, 45, 55]).reshape((-1, 1))
-y = np.array([5, 20, 14, 32, 22, 38])
+# X = np.array([5, 15, 25, 35, 45, 55]).reshape((-1, 1))
+# y = np.array([5, 20, 14, 32, 22, 38])
 
 
 def svm_noSlack_dual(X,y):
     #Initializing values and computing H. Note the 1. to force to float type
     m,n = X.shape
-    y = y.reshape(-1,1) * 1
+    y = y.reshape(-1,1) * 1.
     X_dash = y * X
-    H = np.dot(X_dash, X_dash.T) * 1
+    H = np.dot(X_dash , X_dash.T) * 1.
 
     #Converting into cvxopt format
     P = cvxopt_matrix(H)
@@ -95,8 +95,8 @@ def svm_Slack_dual(X, y, C=1):
     return theta, theta0
 
 
-def svm_regression(X,y,C=1):
-    
+# def svm_regression(X,y,C=1):
+
 
 
 def plot_decision_boundary(X, y, theta0, theta):
@@ -115,14 +115,14 @@ def plot_decision_boundary(X, y, theta0, theta):
 
 
 # results = svm_noSlack_dual(X,y)
-# results = svm_Slack_dual(X,y,C=1)
-# beta = results[0]
-# beta0 = results[1]
-# plot_decision_boundary(X, y, beta0, beta)
+results = svm_Slack_dual(X,y,C=1)
+beta = results[0]
+beta0 = results[1]
+plot_decision_boundary(X, y, beta0, beta)
 
 
 
-# # results = svm_noSlack_dual(X,y)
+# results = svm_noSlack_dual(X,y)
 # results = svm_Slack_dual(X,y,C=1)
 # beta = results[0]
 # beta0 = results[1]
