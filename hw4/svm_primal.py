@@ -5,15 +5,15 @@ matplotlib.use('TkAgg')
 import matplotlib.pyplot as plt
 import cvxpy as cp
 
-X_noSlack, labels_noSlack = make_blobs(n_samples=100, n_features=2, centers=2, cluster_std=1.25,  random_state=1234)
-X_Slack, labels_Slack = make_blobs(n_samples=100, n_features=2, centers=2, cluster_std=2,  random_state=1234)
+# X_noSlack, labels_noSlack = make_blobs(n_samples=100, n_features=2, centers=2, cluster_std=1.25,  random_state=1234)
+# X_Slack, labels_Slack = make_blobs(n_samples=100, n_features=2, centers=2, cluster_std=2,  random_state=1234)
 
 # plt.figure(figsize=(5, 5))
 # plt.title('Two blobs')
 # plt.scatter(X_Slack[:, 0], X_Slack[:, 1], c=labels_Slack, s=25);
 
-# X = np.array([5, 15, 25, 35, 45, 55]).reshape((-1, 1))
-# y = np.array([5, 20, 14, 32, 22, 38])
+X = np.array([5, 15, 25, 35, 45, 55]).reshape((-1, 1))
+y = np.array([5, 20, 14, 32, 22, 38])
 
 # X = np.array([[3,4],[1,4],[2,3],[6,-1],[7,-1],[5,-3],[2,4], [4,4]])
 # y = np.array([-1, -1, -1, 1, 1, 1, 1, 1])
@@ -158,14 +158,14 @@ def plot_decision_boundary_regression(X, y, theta0, theta):
 # plot_decision_boundary(X_noSlack, labels_noSlack, beta0, beta)
 
 
-results = svm_Slack(X_Slack, labels_Slack, C=1)
-beta = results[0]
-beta0 = results[1]
-plot_decision_boundary(X_Slack, labels_Slack, beta0, beta)
-
-
-# results = svm_Regression(X, y, C=1, epsilon=0.1)
+# results = svm_Slack(X_Slack, labels_Slack, C=1)
 # beta = results[0]
 # beta0 = results[1]
-# plot_decision_boundary_regression(X,y,beta0,beta)
+# plot_decision_boundary(X_Slack, labels_Slack, beta0, beta)
+
+
+results = svm_Regression(X, y, C=1, epsilon=0.1)
+beta = results[0]
+beta0 = results[1]
+plot_decision_boundary_regression(X,y,beta0,beta)
 # reference: https://github.com/learn-co-curriculum/dsc-building-an-svm-from-scratch-lab/blob/master/index.ipynb
